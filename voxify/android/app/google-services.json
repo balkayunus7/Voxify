@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1098970532641",
+    "project_id": "voxify-d63e0",
+    "storage_bucket": "voxify-d63e0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1098970532641:android:bf25182b604d32f7f58c60",
+        "android_client_info": {
+          "package_name": "com.example.voxify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-RfxzoeJxc5nrYzVXTMVuktzWGKCG4VE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
