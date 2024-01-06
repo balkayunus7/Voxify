@@ -36,7 +36,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   kartal: ^3.4.4
-  equatable: ^2.0.5
+  equatable: ^2.0.3
   animated_text_kit: ^4.2.2
 
   #BLOC
@@ -44,8 +44,8 @@ dependencies:
 
   #FIREBASE
   cloud_firestore: ^4.9.3
-  firebase_auth: ^4.2.9
   firebase_core: ^2.24.2
+  firebase_auth: ^4.16.0
 
 
 dev_dependencies:

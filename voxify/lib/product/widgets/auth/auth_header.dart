@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
-
 import '../../constants/color_constants.dart';
-import '../../constants/string_constants.dart';
 import '../../enums/icon_image.dart';
-import '../../enums/widget_sizes.dart';
 import '../texts/subtitle_text.dart';
 import '../texts/title_text.dart';
 
