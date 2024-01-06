@@ -1,10 +1,9 @@
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
 import '../../product/constants/color_constants.dart';
 import '../../product/constants/string_constants.dart';
-import '../../product/enums/icon_sizes.dart';
+import '../../product/enums/icon_image.dart';
 import '../../product/widgets/texts/wavy_text.dart';
 import '../auth/login_view.dart';
 
@@ -16,17 +15,26 @@ class SplashView extends StatefulWidget {
 }
   
 class _SplashViewState extends State<SplashView> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 2),
+        () {
+          context.route.navigateToPage(const LoginPage());
+        }
+    );
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    checkStatus();
+   // checkStatus();
   }
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorConstants.primaryOrange,
+      backgroundColor: ColorConstants.primaryGreen,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -41,6 +49,7 @@ class _SplashViewState extends State<SplashView> {
       ),
     );
   }
+  /*
   void checkStatus() async {
     Future.delayed(const Duration(seconds: 2), () {
       final user = FirebaseAuth.instance.currentUser;
@@ -53,4 +62,5 @@ class _SplashViewState extends State<SplashView> {
       }
     });
   }
+  */
 }

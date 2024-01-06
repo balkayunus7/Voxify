@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
-import 'package:voxify/product/enums/image_sizes.dart';
+import 'package:voxify/feature/auth/login_view.dart';
 import '../../product/constants/string_constants.dart';
 import '../../product/enums/widget_sizes.dart';
 import '../../product/widgets/auth/auth_button.dart';
 import '../../product/widgets/auth/auth_header.dart';
 import '../../product/widgets/textfields/custom_textfield.dart';
-import 'register_view.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   @override
@@ -30,10 +29,15 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const HeaderAuth(
-                  titleText: StringConstants.login,
+                  titleText: StringConstants.register,
                   subtitleText: StringConstants.welcomeBack,
                 ),
-                SizedBox(height: WidgetSize.sizedBoxNormal.value),
+                Padding(
+                    padding: context.padding.normal,
+                    child: CustomTextfield(
+                        controller: _emailController,
+                        hintText: StringConstants.hintName,
+                        iconFirst: Icons.email)),
                 Padding(
                     padding: context.padding.normal,
                     child: CustomTextfield(
@@ -47,30 +51,18 @@ class _LoginPageState extends State<LoginPage> {
                         hintText: StringConstants.hintTextPassword,
                         iconFirst: Icons.lock)),
                 Padding(
-                  padding: context.padding.onlyRightNormal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child:
-                            _authText(context, StringConstants.forgotPassword),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
                     padding: context.padding.normal,
                     child: GestureDetector(
                       onTap: () {},
                       child: AuthButton(
-                          iconText: StringConstants.login, onPressed: () {}),
+                          iconText: StringConstants.register, onPressed: () {}),
                     )),
                 GestureDetector(
                   onTap: () {
-                    context.route.navigateToPage(const RegisterPage());
+                    context.route.navigateToPage(const LoginPage());
                   },
-                  child: _authText(context, StringConstants.routingTextLogin),
+                  child:
+                      _authText(context, StringConstants.routingTextRegister),
                 ),
               ],
             ),

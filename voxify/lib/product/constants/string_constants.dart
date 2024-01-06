@@ -4,23 +4,23 @@ import 'package:flutter/material.dart';
 class StringConstants {
   const StringConstants._();
 
-  static const String appName = ' Carstore';
+  static const String appName = 'Voxify';
 
   // Login
   static const String login = 'Login';
   static const String register = 'Register';
-  static const String welcomeBack = 'Welcome to CarStore';
+  static const String welcomeBack = 'Welcome to Voxify';
   static const String continiueApp = 'Continiue to app';
   static const String hintTextEmail = 'E Mail';
   static const String hintName = 'Username';
   static const String hintTextPassword = 'Password';
-  static const String routingTextLogin = 'A new gym trainer? Sign up now!';
+  static const String routingTextLogin = 'A new Voxify user? Sign up now!';
   static const String routingTextRegister =
-      'Are you already trainer? Sign in now!';
+      'Are you already Voxify user? Sign in now!';
       
 
   // Home
-  static const String homeBrowse = 'CarStore';
+  static const String homeBrowse = 'Voxify';
   static const String homeMessage = 'Discover the best cars  in our store';
   static const String homeTitle = 'Recommended ';
   static const String homeSeeAll = 'See All';

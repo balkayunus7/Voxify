@@ -25,7 +25,7 @@ class CustomTextfield extends StatelessWidget {
           hintText: hintText,
           prefixIcon: Icon(
             iconFirst,
-            color: ColorConstants.primaryOrange,
+            color: ColorConstants.primaryGreenDark,
           ),
           hintStyle: context.general.textTheme.bodyMedium,
           border: OutlineInputBorder(
@@ -42,7 +42,7 @@ class CustomTextfield extends StatelessWidget {
           focusedBorder: OutlineInputBorder(
             borderRadius: WidgetSizeConstants.borderRadiusNormal,
             borderSide: const BorderSide(
-              color: ColorConstants.primaryOrange,
+              color: ColorConstants.primaryGreenDark,
               width: 3,
             ),
           )),
@@ -79,7 +79,7 @@ class _CustomTextfieldPasswordState extends State<CustomTextfieldPassword> {
           hintText: widget.hintText,
           prefixIcon: Icon(
             widget.iconFirst,
-            color: ColorConstants.primaryOrange,
+            color: ColorConstants.primaryGreenDark,
           ),
           hintStyle: context.general.textTheme.bodyMedium,
           border: OutlineInputBorder(
@@ -100,14 +100,14 @@ class _CustomTextfieldPasswordState extends State<CustomTextfieldPassword> {
             },
             child: Icon(
               _obscureText ? Icons.visibility : Icons.visibility_off,
-              color: ColorConstants.primaryOrange,
+              color: ColorConstants.primaryGreenDark,
             ),
           ),
           enabled: true,
           focusedBorder: OutlineInputBorder(
             borderRadius: WidgetSizeConstants.borderRadiusNormal,
             borderSide: const BorderSide(
-              color: ColorConstants.primaryOrange,
+              color: ColorConstants.primaryGreenDark,
               width: 3,
             ),
           )),

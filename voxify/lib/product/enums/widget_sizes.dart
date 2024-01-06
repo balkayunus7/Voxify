@@ -6,13 +6,11 @@ enum WidgetSize {
   sizedBoxLow(10),
   sizedBoxNormal(20),
   sizedBoxBig(50),
-  paddingAuthTop(180),
-  fontSizeNormal(20);
+  paddingAuthTop(125),
+  fontSizeNormal(16);
 
 
   final double value;
-
-  // ignore: sort_constructors_first
   const WidgetSize(this.value);
 }
 
