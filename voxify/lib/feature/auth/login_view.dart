@@ -80,7 +80,6 @@ class _LoginPageState extends State<LoginPage> {
                                     'Login is Failed! ${e.toString()}');
                               }).then((value) => context.route
                                       .navigateToPage(const HomeView()));
-                              ;
                             }),
                       )),
                   GestureDetector(

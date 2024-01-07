@@ -10,6 +10,5 @@ class AppliactionStart {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-
   }
 }

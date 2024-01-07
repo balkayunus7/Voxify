@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:voxify/feature/splash/splash_view.dart';
+import 'package:voxify/feature/home/home_view.dart';
 import 'package:voxify/product/constants/string_constants.dart';
 import 'package:voxify/product/initialize/application_start.dart';
 import 'package:voxify/product/widgets/utilites/app_theme.dart';
 
-void main() {
-  AppliactionStart.init();
+Future<void> main() async {
+  await AppliactionStart.init();
   runApp(const MyApp());
 }
 
@@ -18,11 +18,7 @@ class MyApp extends StatelessWidget {
       title: StringConstants.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme(context: context).theme,
-      home:const SplashView(),
+      home: const HomeView(),
     );
   }
 }
-
-
-
-

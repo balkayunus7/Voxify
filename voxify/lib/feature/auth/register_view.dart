@@ -66,6 +66,7 @@ class _LoginPageState extends State<RegisterPage> {
                                     _emailController.text,
                                     _passwordController.text,
                                     _usernameController.text)
+                                // ignore: body_might_complete_normally_catch_error
                                 .catchError((e) {
                               _authCubit.errorMessage(context, e,
                                   'Register is Failed! ${e.toString()}');

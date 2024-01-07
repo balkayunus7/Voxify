@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-
 import '../../constants/color_constants.dart';
 import '../texts/title_text.dart';
 import 'custom_icon_appbar.dart';
 
 class CustomAppBar extends PreferredSize {
   const CustomAppBar(
-    this.title, {super.key, 
+    this.title, {
+    super.key,
     required this.iconColor,
     required super.preferredSize,
     required super.child,
     required this.onPressed,
-
   });
 
   final String title;
@@ -30,7 +29,7 @@ class CustomAppBar extends PreferredSize {
       centerTitle: true,
       title: TitleText(
         title: title,
-        color: ColorConstants.primaryGreen,
+        color: ColorConstants.primaryDark,
       ),
       backgroundColor: Colors.transparent,
     );

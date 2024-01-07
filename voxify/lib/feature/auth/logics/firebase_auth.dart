@@ -24,7 +24,7 @@ class FirebaseAuthService extends BaseFirebaseService {
   // Override signUpUserWithFirebase method
   @override
   Future<UserCredential> signUpUserWithFirebase(
-      String email, String password, String name) {
+      String email, String password, String username) {
     final userCredential =
         kauth.createUserWithEmailAndPassword(email: email, password: password);
     // Return user credentials
