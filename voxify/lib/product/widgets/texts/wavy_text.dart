@@ -1,7 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:kartal/kartal.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 import '../../constants/color_constants.dart';
 
 class WavyText extends StatelessWidget {
@@ -16,8 +15,9 @@ class WavyText extends StatelessWidget {
       animatedTexts: [
         WavyAnimatedText(
           title,
-          textStyle: context.general.textTheme.headlineSmall?.copyWith(
-            color: ColorConstants.primaryWhite,
+          textStyle: GoogleFonts.lato(
+            color: ColorConstants.primaryDark,
+            fontSize: 23,
             fontWeight: FontWeight.bold,
           ),
         ),

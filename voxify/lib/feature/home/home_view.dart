@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voxify/feature/home/cubits/home_cubit.dart';
 import 'package:voxify/product/constants/color_constants.dart';
+import 'package:voxify/product/enums/icon_image.dart';
 import 'package:voxify/product/models/users.dart';
 import 'package:voxify/product/widgets/appbar/custom_appbar.dart';
 import '../../product/constants/string_constants.dart';
+import '../../product/widgets/texts/google_fonts.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -40,12 +42,12 @@ class _UserListView extends StatefulWidget {
 }
 
 class _UserListViewState extends State<_UserListView> {
-
   @override
   void initState() {
     super.initState();
     context.read<HomeCubit>().fetchUsers();
   }
+
   @override
   Widget build(BuildContext context) {
     return BlocSelector<HomeCubit, HomeState, List<Users>>(
@@ -59,14 +61,21 @@ class _UserListViewState extends State<_UserListView> {
           );
         }
         return ListView.builder(
-          itemCount: state.length,
-          itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(
-              state[index].email ?? 'Email',
-            ),
-          );
-        });
+            itemCount: state.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                  title: GoogleText(
+                    text: state[index].name.toString(),
+                  ),
+                  subtitle: GoogleText(
+                    text: state[index].email.toString(),
+                  ),
+                  leading: CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      state[index].profilePhoto.toString(),
+                    ),
+                  ));
+            });
       },
     );
   }

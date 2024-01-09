@@ -20,7 +20,7 @@ class IconAppBar extends StatelessWidget {
       iconSize: WidgetSize.iconNormal.value,
       color: iconColor,
       onPressed: onPressed,
-      icon: Icon(iconData),
+      icon: Icon(iconData,size: 28,),
     );
   }
 }

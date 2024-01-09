@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kartal/kartal.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SubtitleText extends StatelessWidget {
   const SubtitleText({required this.subtitle, required this.color, super.key});
@@ -9,13 +9,11 @@ class SubtitleText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      subtitle,
-      style: context.general.textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.w500,
-        fontSize: 17,
-        color: color,
-      ),
-    );
+    return Text(subtitle,
+        style: GoogleFonts.lato(
+          color: color,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ));
   }
 }

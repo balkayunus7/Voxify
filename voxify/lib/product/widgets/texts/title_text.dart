@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kartal/kartal.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TitleText extends StatelessWidget {
   const TitleText({required this.title, required this.color, super.key});
@@ -11,8 +11,11 @@ class TitleText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: context.general.textTheme.titleLarge
-          ?.copyWith(fontWeight: FontWeight.bold, fontSize: 20, color: color),
+      style: GoogleFonts.lato(
+        color: color,
+        fontSize: 23,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 }
