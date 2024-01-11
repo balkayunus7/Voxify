@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kartal/kartal.dart';
+import 'package:voxify/feature/chat/chat_view.dart';
 import 'package:voxify/feature/home/cubits/home_cubit.dart';
-import 'package:voxify/product/constants/color_constants.dart';
-import 'package:voxify/product/enums/icon_image.dart';
 import 'package:voxify/product/models/users.dart';
 import 'package:voxify/product/widgets/appbar/custom_appbar.dart';
 import '../../product/constants/string_constants.dart';
@@ -23,7 +23,6 @@ class _HomeViewState extends State<HomeView> {
       child: Scaffold(
         appBar: CustomAppBar(
           StringConstants.appName,
-          iconColor: ColorConstants.primaryDark,
           preferredSize: const Size.fromHeight(kToolbarHeight),
           onPressed: () {},
           child: const SizedBox.shrink(),
@@ -63,18 +62,24 @@ class _UserListViewState extends State<_UserListView> {
         return ListView.builder(
             itemCount: state.length,
             itemBuilder: (context, index) {
-              return ListTile(
-                  title: GoogleText(
-                    text: state[index].name.toString(),
-                  ),
-                  subtitle: GoogleText(
-                    text: state[index].email.toString(),
-                  ),
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      state[index].profilePhoto.toString(),
+              return GestureDetector(
+                onTap: () => context.route.navigateToPage(ChatPage(
+                  receiverEmail: state[index].email.toString(),
+                  receiverId: state[index].id.toString(),
+                )),
+                child: ListTile(
+                    title: GoogleText(
+                      text: state[index].name.toString(),
                     ),
-                  ));
+                    subtitle: GoogleText(
+                      text: state[index].email.toString(),
+                    ),
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        state[index].profilePhoto.toString(),
+                      ),
+                    )),
+              );
             });
       },
     );
