@@ -10,9 +10,7 @@ class ChatNotifier extends StateNotifier<ChatState> {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final List<Messages> _messageList = [];
 
-  List<Messages> get messageList => _messageList;
   // get current user info
   String get currentUserId => _auth.currentUser!.uid;
   // send message
@@ -49,16 +47,15 @@ class ChatNotifier extends StateNotifier<ChatState> {
 
     final chatDocument = _firestore.collection('chat_rooms').doc(chatRoomId);
     final chatCollection = chatDocument
-        .collection('messages')
-        .orderBy('createdAt', descending: false);
+        .collection('messages').orderBy("timestamp",descending: false);
     final QuerySnapshot querySnapshot = await chatCollection.get();
 
     if (querySnapshot.docs.isNotEmpty) {
-      List<Messages> messageList = querySnapshot.docs.map((e) {
+      List<Messages>? messageList = querySnapshot.docs.map((e) {
         final data = e.data() as Map<String, dynamic>;
         return Messages().fromJson(data);
       }).toList();
-      state=state.copyWith(message: messageList);
+      state = state.copyWith(message: messageList);
     }
     return;
   }

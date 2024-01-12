@@ -5,7 +5,7 @@ import 'package:voxify/feature/chat/providers/chat_notifier.dart';
 import 'package:voxify/product/constants/string_constants.dart';
 import 'package:voxify/product/widgets/appbar/custom_appbar.dart';
 
-final _chatNotifier = StateNotifierProvider<ChatNotifier, ChatState>((ref) {
+final chatNotifier = StateNotifierProvider<ChatNotifier, ChatState>((ref) {
   return ChatNotifier();
 });
 
@@ -21,25 +21,29 @@ class ChatPage extends ConsumerStatefulWidget {
 
 class _ChatPageState extends ConsumerState<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
-  final ChatNotifier chatNotifier = ChatNotifier();
+
   @override
   void initState() {
     super.initState();
     getMessages();
   }
+  @override
+  void dispose() { 
+    super.dispose();
+  }
 
   Future<void> sendMessage() async {
     if (_messageController.text.isNotEmpty) {
       ref
-          .read(_chatNotifier.notifier)
+          .read(chatNotifier.notifier)
           .sendMessage(widget.receiverId, _messageController.text);
       _messageController.clear();
     }
   }
 
   Future<void> getMessages() async {
-    ref.read(_chatNotifier.notifier).getMessages(
-        chatNotifier.currentUserId, widget.receiverId);
+    ref.read(chatNotifier.notifier).getMessages(
+        ref.read(chatNotifier.notifier).currentUserId, widget.receiverId);
   }
 
   @override
@@ -82,17 +86,17 @@ class _MessageUserList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final message = ref.watch(_chatNotifier).message;
-    if (message == null) {
+    final messageList = ref.watch(chatNotifier).message;
+    if (messageList == null) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
     return Expanded(
       child: ListView.builder(
-          itemCount: message.length,
+          itemCount: messageList.length,
           itemBuilder: (context, index) {
-            final state = message[index];
+            final state = messageList[index];
             return Padding(
               padding: context.padding.normal,
               child: ListTile(
