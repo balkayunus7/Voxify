@@ -40,7 +40,7 @@ class Messages with EquatableMixin, BaseFirebaseModel<Messages>, IDModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'createdAt': timestamp,
+      'timestamp': timestamp,
       'senderEmail': senderEmail,
       'senderId': senderId,
       'message': message,

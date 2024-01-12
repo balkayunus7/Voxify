@@ -1,31 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kartal/kartal.dart';
+import 'package:voxify/feature/auth/providers/auth_notifier.dart';
 import 'package:voxify/feature/auth/login_view.dart';
 import '../../product/constants/string_constants.dart';
 import '../../product/enums/widget_sizes.dart';
 import '../../product/widgets/auth/auth_button.dart';
 import '../../product/widgets/auth/auth_header.dart';
 import '../../product/widgets/textfields/custom_textfield.dart';
-import 'cubits/auth_cubit.dart';
 
-class RegisterPage extends StatefulWidget {
+
+
+
+class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _LoginPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<RegisterPage> {
+class _RegisterPageState extends ConsumerState<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final AuthCubit _authCubit = AuthCubit();
+
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthCubit(),
-      child: Scaffold(
+    final auth = ref.read(authProvider);
+    return Scaffold(
         body: SingleChildScrollView(
           child: Padding(
             padding: context.padding.low
@@ -61,14 +64,14 @@ class _LoginPageState extends State<RegisterPage> {
                       child: AuthButton(
                           iconText: StringConstants.register,
                           onPressed: () {
-                            _authCubit
+                            auth
                                 .signUpUserWithFirebase(
                                     _emailController.text,
                                     _passwordController.text,
                                     _usernameController.text)
                                 // ignore: body_might_complete_normally_catch_error
                                 .catchError((e) {
-                              _authCubit.errorMessage(context, e,
+                              auth.errorMessage(context, e,
                                   'Register is Failed! ${e.toString()}');
                             }).then((value) => context.route
                                     .navigateToPage(const LoginPage()));
@@ -85,8 +88,7 @@ class _LoginPageState extends State<RegisterPage> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   Text _authText(BuildContext context, String text) {
@@ -95,3 +97,8 @@ class _LoginPageState extends State<RegisterPage> {
             .copyWith(fontWeight: FontWeight.bold));
   }
 }
+  
+
+
+
+

@@ -1,15 +1,12 @@
-import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:voxify/feature/auth/logics/firebase_auth.dart';
 import 'package:voxify/feature/auth/logics/firestore_auth.dart';
 import '../../../product/constants/color_constants.dart';
 import '../../../product/enums/widget_sizes.dart';
 
-class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(const AuthState(isLoggedIn: false));
-
+class AuthNotifier extends ChangeNotifier {
   final FirebaseAuthService firebaseAuthService = FirebaseAuthService();
   final FirestoreService firestoreService = FirestoreService();
   UserCredential? _userCredential;
@@ -39,7 +36,6 @@ class AuthCubit extends Cubit<AuthState> {
       _userCredential =
           await firebaseAuthService.loginUserWithFirebase(email, password);
       // Return user credentials
-      emit(state.copyWith(isLoggedIn: true, userCredential: userCredential));
       return _userCredential;
     } catch (e) {
       throw Exception(e.toString());
@@ -62,24 +58,10 @@ class AuthCubit extends Cubit<AuthState> {
 
     String uid = _userCredential!.user!.uid;
     await firestoreService.addToFirestore(data, 'users', uid);
-
-    emit(state.copyWith(isLoggedIn: false, userCredential: userCredential));
     return userCredential;
   }
 }
 
-final class AuthState extends Equatable {
-  const AuthState({required this.isLoggedIn, this.userCredential});
-
-  final bool? isLoggedIn;
-  final UserCredential? userCredential;
-  @override
-  List<Object?> get props => [isLoggedIn];
-
-  AuthState copyWith({bool? isLoggedIn, UserCredential? userCredential}) {
-    return AuthState(
-      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
-      userCredential: userCredential ?? this.userCredential,
-    );
-  }
-}
+// Define provider for AuthProvider
+final authProvider =
+    ChangeNotifierProvider<AuthNotifier>((ref) => AuthNotifier());

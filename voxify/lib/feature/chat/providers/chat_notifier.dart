@@ -2,11 +2,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../product/models/messages.dart';
 
-class ChatCubit extends Cubit<ChatState> {
-  ChatCubit() : super(const ChatState());
+class ChatNotifier extends StateNotifier<ChatState> {
+  ChatNotifier() : super(const ChatState());
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -48,7 +48,9 @@ class ChatCubit extends Cubit<ChatState> {
     String chatRoomId = userIds.join('_');
 
     final chatDocument = _firestore.collection('chat_rooms').doc(chatRoomId);
-    final chatCollection = chatDocument.collection('messages').orderBy('createdAt', descending: true);
+    final chatCollection = chatDocument
+        .collection('messages')
+        .orderBy('createdAt', descending: false);
     final QuerySnapshot querySnapshot = await chatCollection.get();
 
     if (querySnapshot.docs.isNotEmpty) {
@@ -56,7 +58,7 @@ class ChatCubit extends Cubit<ChatState> {
         final data = e.data() as Map<String, dynamic>;
         return Messages().fromJson(data);
       }).toList();
-      emit(state.copyWith(message: messageList));
+      state=state.copyWith(message: messageList);
     }
     return;
   }

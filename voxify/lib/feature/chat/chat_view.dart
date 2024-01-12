@@ -1,31 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kartal/kartal.dart';
-import 'package:voxify/feature/chat/cubits/chat_cubit.dart';
+import 'package:voxify/feature/chat/providers/chat_notifier.dart';
+import 'package:voxify/product/constants/string_constants.dart';
 import 'package:voxify/product/widgets/appbar/custom_appbar.dart';
-import '../../product/models/messages.dart';
 
-class ChatPage extends StatefulWidget {
+final _chatNotifier = StateNotifierProvider<ChatNotifier, ChatState>((ref) {
+  return ChatNotifier();
+});
+
+class ChatPage extends ConsumerStatefulWidget {
   const ChatPage(
-      {super.key, required this.receiverEmail, required this.receiverId});
+      {required this.receiverEmail, required this.receiverId, super.key});
   final String receiverEmail;
   final String receiverId;
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends ConsumerState<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
-  final ChatCubit _chatCubit = ChatCubit();
+  final ChatNotifier chatNotifier = ChatNotifier();
+  @override
+  void initState() {
+    super.initState();
+    getMessages();
+  }
 
-  Future<void> sendMessages() async {
+  Future<void> sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      await _chatCubit.sendMessage(widget.receiverId, _messageController.text);
+      ref
+          .read(_chatNotifier.notifier)
+          .sendMessage(widget.receiverId, _messageController.text);
       _messageController.clear();
     }
   }
 
+  Future<void> getMessages() async {
+    ref.read(_chatNotifier.notifier).getMessages(
+        chatNotifier.currentUserId, widget.receiverId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,89 +50,57 @@ class _ChatPageState extends State<ChatPage> {
           child: const SizedBox.shrink(), onPressed: () {
         context.route.pop();
       }),
-      body: BlocProvider(
-        create: (context) => ChatCubit(),
-        child: Column(
-          children: [
-            MessageUserList(
-              receiverEmail: widget.receiverEmail,
-              receiverId: widget.receiverId,
-            ),
-            Padding(
-              padding: context.padding.normal,
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: _messageController,
-                    decoration: const InputDecoration(
-                      hintText: 'Message',
-                    ),
+      body: Column(
+        children: [
+          const _MessageUserList(),
+          Padding(
+            padding: context.padding.normal,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _messageController,
+                  decoration: const InputDecoration(
+                    hintText: StringConstants.chatMessage,
                   ),
-                  IconButton(
-                      onPressed: () {
-                        sendMessages();
-                      },
-                      icon: const Icon(Icons.send))
-                ],
-              ),
-            )
-          ],
-        ),
+                ),
+                IconButton(
+                    onPressed: () {
+                      sendMessage().then((value) => getMessages());
+                    },
+                    icon: const Icon(Icons.send))
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
 }
 
-class MessageUserList extends ChatPage {
-  // ignore: prefer_const_constructors_in_immutables
-  MessageUserList({
-    super.key,
-    required super.receiverEmail,
-    required super.receiverId,
-  });
+class _MessageUserList extends ConsumerWidget {
+  const _MessageUserList();
 
   @override
-  State<MessageUserList> createState() => _MessageUserListState();
-}
-
-class _MessageUserListState extends State<MessageUserList> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<ChatCubit>().getMessages(
-        context.read<ChatCubit>().currentUserId, widget.receiverId);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    context.read<ChatCubit>().getMessages(
-        context.read<ChatCubit>().currentUserId, widget.receiverId);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocSelector<ChatCubit, ChatState, List<Messages>?>(
-      selector: (state) {
-        return state.message ?? [];
-      },
-      builder: (context, state) {
-        if (state!.isEmpty) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        return Expanded(
-          child: ListView.builder(
-              itemCount: state.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(state[index].senderEmail.toString()),
-                  subtitle: Text(state[index].message.toString()),
-                );
-              }),
-        );
-      },
+  Widget build(BuildContext context, WidgetRef ref) {
+    final message = ref.watch(_chatNotifier).message;
+    if (message == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return Expanded(
+      child: ListView.builder(
+          itemCount: message.length,
+          itemBuilder: (context, index) {
+            final state = message[index];
+            return Padding(
+              padding: context.padding.normal,
+              child: ListTile(
+                title: Text(state.message.toString()),
+                subtitle: Text(state.senderEmail.toString()),
+              ),
+            );
+          }),
     );
   }
 }

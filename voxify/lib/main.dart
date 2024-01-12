@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:voxify/feature/home/home_view.dart';
 import 'package:voxify/product/constants/string_constants.dart';
 import 'package:voxify/product/initialize/application_start.dart';
@@ -6,7 +7,7 @@ import 'package:voxify/product/widgets/utilites/app_theme.dart';
 
 Future<void> main() async {
   await AppliactionStart.init();
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       title: StringConstants.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme(context: context).theme,
-      home: const HomeView(),
+      home: const HomePage(),
     );
   }
 }
