@@ -35,7 +35,7 @@ class ChatNotifier extends StateNotifier<ChatState> {
           senderEmail: currentUserEmail,
           message: message,
           receiverId: receiverId,
-          timestamp: timestamp.toString(),
+          timestamp: timestamp,
         ).toJson());
   }
 
@@ -44,7 +44,6 @@ class ChatNotifier extends StateNotifier<ChatState> {
     List<String> userIds = [userId, otherUserId];
     userIds.sort();
     String chatRoomId = userIds.join('_');
-
     final chatDocument = _firestore.collection('chat_rooms').doc(chatRoomId);
     final chatCollection = chatDocument
         .collection('messages').orderBy("timestamp",descending: false);

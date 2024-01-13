@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 import '../utilites/firebase/base_firebase_model.dart';
@@ -15,7 +16,7 @@ class Messages with EquatableMixin, BaseFirebaseModel<Messages>, IDModel {
   final String? senderEmail;
   final String? message;
   final String? receiverId;
-  final String? timestamp;
+  final Timestamp? timestamp;
  
  
   @override
@@ -23,7 +24,7 @@ class Messages with EquatableMixin, BaseFirebaseModel<Messages>, IDModel {
       [timestamp, senderEmail, senderId, message, receiverId,id];
 
   Messages copyWith({
-    String? timestamp,
+    Timestamp? timestamp,
     String? senderEmail,
     String? senderId,
     String? message,
@@ -51,7 +52,7 @@ class Messages with EquatableMixin, BaseFirebaseModel<Messages>, IDModel {
   @override
   Messages fromJson(Map<String, dynamic> json) {
     return Messages(
-      timestamp: json['timestamp'] as String?,
+      timestamp: json['timestamp'] as Timestamp?,
       message: json['message'] as String?,
       receiverId: json['receiverId'] as String?,
       senderEmail: json['senderEmail'] as String?,

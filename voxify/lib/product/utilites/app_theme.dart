@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
 
-import '../../constants/color_constants.dart';
+import '../constants/color_constants.dart';
 
 @immutable
 class AppTheme {

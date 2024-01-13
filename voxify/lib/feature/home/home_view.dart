@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kartal/kartal.dart';
@@ -30,6 +31,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     return Scaffold(
       appBar: CustomAppBar(
         StringConstants.appName,
+        icon: Icons.perm_identity,
         preferredSize: const Size.fromHeight(kToolbarHeight),
         onPressed: () {},
         child: const SizedBox.shrink(),
@@ -45,6 +47,7 @@ class _UserListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final users = ref.watch(_homeNotifier).user;
+    final currentUserId = ref.watch(_homeNotifier.notifier).currentUserId;
     if (users == null) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -52,7 +55,9 @@ class _UserListView extends ConsumerWidget {
         itemCount: users.length,
         itemBuilder: (context, index) {
           final user = users[index];
-
+          if (user.id == currentUserId) {
+            return const SizedBox.shrink();
+          }
           return GestureDetector(
             onTap: () => context.route.navigateToPage(ChatPage(
               receiverEmail: user.email.toString(),
