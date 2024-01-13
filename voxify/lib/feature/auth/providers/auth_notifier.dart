@@ -12,6 +12,10 @@ class AuthNotifier extends ChangeNotifier {
   UserCredential? _userCredential;
   UserCredential? get userCredential => _userCredential;
 
+  void logout() {
+    firebaseAuthService.signOutUser();
+  }
+
   void errorMessage(BuildContext context, e, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -41,7 +45,6 @@ class AuthNotifier extends ChangeNotifier {
       throw Exception(e.toString());
     }
   }
-
   Future<UserCredential?> signUpUserWithFirebase(
       String email, String password, String name) async {
     _userCredential =

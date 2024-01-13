@@ -1,12 +1,16 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:kartal/kartal.dart';
 import 'package:voxify/feature/chat/chat_view.dart';
 import 'package:voxify/feature/home/providers/home_notifier.dart';
-import 'package:voxify/product/widgets/appbar/custom_appbar.dart';
-import '../../product/constants/string_constants.dart';
+import 'package:voxify/product/constants/color_constants.dart';
+import 'package:voxify/product/constants/string_constants.dart';
+import 'package:voxify/product/widgets/texts/title_text.dart';
+import '../../product/models/users.dart';
 import '../../product/widgets/texts/google_fonts.dart';
+import '../profile/profile_view.dart';
+import 'sub/slider_drawer.dart';
 
 final _homeNotifier = StateNotifierProvider<HomeNotifier, HomeState>((ref) {
   return HomeNotifier();
@@ -20,24 +24,42 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  final GlobalKey<SliderDrawerState> _sliderDrawerKey =
+      GlobalKey<SliderDrawerState>();
   @override
   void initState() {
     super.initState();
     ref.read(_homeNotifier.notifier).fetchUsers();
+    ref.read(_homeNotifier.notifier).getCurrentUser();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        StringConstants.appName,
-        icon: Icons.perm_identity,
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        onPressed: () {},
-        child: const SizedBox.shrink(),
-      ),
-      body: const _UserListView(),
-    );
+    final Users? currentUser = ref.watch(_homeNotifier).currentUser;
+    if (currentUser != null) {
+      return Scaffold(
+        body: Padding(
+          padding: context.padding.onlyTopNormal,
+          child: SliderDrawer(
+              appBar: const SliderAppBar(
+                  appBarColor: Colors.white,
+                  title: TitleText(
+                      title: StringConstants.appName,
+                      color: ColorConstants.primaryDark)),
+              key: _sliderDrawerKey,
+              sliderOpenSize: 179,
+              slider: SliderView(
+                profilePhoto: currentUser.profilePhoto.toString(),
+                userName: currentUser.name.toString(),
+                onProfileTap: () {
+                  context.route.navigateToPage(const UserManagementPage());
+                },
+              ),
+              child: const _UserListView()),
+        ),
+      );
+    }
+    return const Center(child: CircularProgressIndicator());
   }
 }
 
