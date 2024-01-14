@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
+import 'package:voxify/product/enums/widget_sizes.dart';
 import '../../constants/color_constants.dart';
 import '../../enums/icon_image.dart';
 import '../texts/subtitle_text.dart';
@@ -19,7 +20,7 @@ class HeaderAuth extends StatelessWidget {
         Padding(
           padding: context.padding.onlyBottomNormal,
           child: ClipRRect(
-              borderRadius: context.border.lowBorderRadius,
+              borderRadius: WidgetSizeConstants.borderRadiusNormal,
               child: IconConstants.logo.toImage),
         ),
         Padding(

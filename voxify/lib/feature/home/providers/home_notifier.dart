@@ -12,10 +12,7 @@ class HomeNotifier extends StateNotifier<HomeState> with FirebaseUtility {
 
   final String _auth = FirebaseAuth.instance.currentUser!.uid;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-
   get currentUserId => _auth;
-
-
 
   Future<void> fetchUsers() async {
     final item =
@@ -26,6 +23,7 @@ class HomeNotifier extends StateNotifier<HomeState> with FirebaseUtility {
   // Method to get current user
   Future<void> getCurrentUser() async {
     final user = FirebaseAuth.instance.currentUser;
+    // if user is not null then get user document from firestore
     if (user != null) {
       final userUid = user.uid;
       final userDocument = await firestore

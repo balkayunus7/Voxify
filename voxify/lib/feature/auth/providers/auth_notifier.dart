@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:voxify/feature/auth/logics/firebase_auth.dart';
 import 'package:voxify/feature/auth/logics/firestore_auth.dart';
+import 'package:voxify/product/utilites/firebase/firebase_collections.dart';
 import '../../../product/constants/color_constants.dart';
 import '../../../product/enums/widget_sizes.dart';
 
@@ -45,6 +46,7 @@ class AuthNotifier extends ChangeNotifier {
       throw Exception(e.toString());
     }
   }
+
   Future<UserCredential?> signUpUserWithFirebase(
       String email, String password, String name) async {
     _userCredential =
@@ -60,7 +62,8 @@ class AuthNotifier extends ChangeNotifier {
     };
 
     String uid = _userCredential!.user!.uid;
-    await firestoreService.addToFirestore(data, 'users', uid);
+    await firestoreService.addToFirestore(
+        data, FirebaseCollections.users.name, uid);
     return userCredential;
   }
 }

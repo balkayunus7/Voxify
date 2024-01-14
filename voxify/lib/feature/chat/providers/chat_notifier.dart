@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:voxify/product/utilites/firebase/firebase_collections.dart';
 import '../../../product/models/messages.dart';
 
 class ChatNotifier extends StateNotifier<ChatState> {
@@ -10,12 +11,9 @@ class ChatNotifier extends StateNotifier<ChatState> {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  // get current user info
   String get currentUserId => _auth.currentUser!.uid;
-  // send message
+
   Future<void> sendMessage(String receiverId, String message) async {
-    // get current user info
     final String currentUserId = _auth.currentUser!.uid;
     final String currentUserEmail = _auth.currentUser!.email!;
     final Timestamp timestamp = Timestamp.now();
@@ -27,9 +25,9 @@ class ChatNotifier extends StateNotifier<ChatState> {
 
     // add message to firestore
     await _firestore
-        .collection('chat_rooms')
+        .collection(FirebaseCollections.chat_rooms.name)
         .doc(chatRoomId)
-        .collection('messages')
+        .collection(FirebaseCollections.messages.name)
         .add(Messages(
           senderId: currentUserId,
           senderEmail: currentUserEmail,
@@ -39,21 +37,28 @@ class ChatNotifier extends StateNotifier<ChatState> {
         ).toJson());
   }
 
-// get messages
   Future<void> getMessages(String userId, String otherUserId) async {
+    // construct chat room id from sender and receiver id
     List<String> userIds = [userId, otherUserId];
     userIds.sort();
     String chatRoomId = userIds.join('_');
-    final chatDocument = _firestore.collection('chat_rooms').doc(chatRoomId);
+    // get chat room
+    final chatDocument = _firestore
+        .collection(FirebaseCollections.chat_rooms.name)
+        .doc(chatRoomId);
+    // get messages order by timestamp
     final chatCollection = chatDocument
-        .collection('messages').orderBy("timestamp",descending: false);
+        .collection(FirebaseCollections.messages.name)
+        .orderBy(FirebaseCollections.timestamp.name, descending: false);
+    // get ChatRoom query snapshot
     final QuerySnapshot querySnapshot = await chatCollection.get();
-
+    // if query snapshot is not empty then get messages and convert to list
     if (querySnapshot.docs.isNotEmpty) {
       List<Messages>? messageList = querySnapshot.docs.map((e) {
         final data = e.data() as Map<String, dynamic>;
         return Messages().fromJson(data);
       }).toList();
+      // update state
       state = state.copyWith(message: messageList);
     }
     return;

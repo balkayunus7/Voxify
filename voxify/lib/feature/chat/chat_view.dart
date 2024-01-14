@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:kartal/kartal.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:voxify/feature/chat/providers/chat_notifier.dart';
 import 'package:voxify/product/constants/color_constants.dart';
 import 'package:voxify/product/constants/string_constants.dart';
+import 'package:voxify/product/enums/widget_sizes.dart';
 import 'package:voxify/product/widgets/appbar/custom_appbar.dart';
 import 'package:voxify/product/widgets/texts/subtitle_text.dart';
 
@@ -113,7 +115,7 @@ class _MessageTextform extends StatelessWidget {
       width: context.sized.dynamicWidth(0.8),
       decoration: BoxDecoration(
           color: ColorConstants.primaryGreenDark.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(17)),
+          borderRadius: WidgetSizeConstants.borderRadiusNormal),
       child: TextFormField(
         controller: _messageController,
         autocorrect: true,
@@ -128,24 +130,34 @@ class _MessageTextform extends StatelessWidget {
   }
 }
 
-class _MessageUserList extends ConsumerWidget {
+class _MessageUserList extends ConsumerStatefulWidget {
   const _MessageUserList();
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      __MessageUserListState();
+}
+
+class __MessageUserListState extends ConsumerState<_MessageUserList> {
   String formatTimestamp(DateTime timestamp) {
     String formattedDateTime = DateFormat('HH:mm').format(timestamp);
     return formattedDateTime;
   }
 
+  final ItemScrollController scrollController = ItemScrollController();
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final messageList = ref.watch(chatNotifier).message;
-    String? previousSenderEmail; // Yeni eklenen satır
+    String? previousSenderEmail;
     if (messageList == null) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
     return Expanded(
-      child: ListView.builder(
+      child: ScrollablePositionedList.builder(
+          itemScrollController: scrollController,
           itemCount: messageList.length,
           itemBuilder: (context, index) {
             final state = messageList[index];
@@ -168,7 +180,7 @@ class _MessageUserList extends ConsumerWidget {
                     Padding(
                       padding: context.padding.onlyBottomLow,
                       child: SubtitleText(
-                          subtitle: messageList[index].senderEmail.toString(),
+                          subtitle: state.senderEmail.toString(),
                           color: isCurrentUser
                               ? ColorConstants.primaryGreenDark.withOpacity(0.8)
                               : ColorConstants.primaryGrey),
@@ -183,7 +195,7 @@ class _MessageUserList extends ConsumerWidget {
                           color: isCurrentUser
                               ? ColorConstants.primaryGreenDark.withOpacity(0.2)
                               : ColorConstants.primaryGrey.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(17),
+                          borderRadius: WidgetSizeConstants.borderRadiusNormal,
                         ),
                         child: Padding(
                           padding: context.padding.horizontalNormal

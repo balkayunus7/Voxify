@@ -6,8 +6,11 @@ enum WidgetSize {
   sizedBoxLow(10),
   sizedBoxNormal(20),
   sizedBoxBig(50),
+  avatarRadius(50),
   paddingAuthTop(125),
-  fontSizeNormal(16);
+  fontSizeNormal(16),
+  fontSizeBig(35),
+  sliderOpenSize(180);
 
 
   final double value;

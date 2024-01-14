@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kartal/kartal.dart';
 import 'package:voxify/feature/home/home_view.dart';
+import 'package:voxify/product/enums/widget_sizes.dart';
 
 import '../../product/constants/color_constants.dart';
 import '../../product/constants/string_constants.dart';
@@ -86,7 +87,7 @@ class _UserManagementPageState extends ConsumerState<UserManagementPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorConstants.primaryGreenDark,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: WidgetSizeConstants.borderRadiusNormal,
                           ),
                         ),
                         onPressed: () {

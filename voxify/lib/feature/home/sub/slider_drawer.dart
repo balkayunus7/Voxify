@@ -1,6 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:kartal/kartal.dart';
+import 'package:voxify/product/constants/color_constants.dart';
+import 'package:voxify/product/constants/string_constants.dart';
+import 'package:voxify/product/enums/widget_sizes.dart';
 import 'package:voxify/product/widgets/texts/google_fonts.dart';
 
 class SliderView extends StatefulWidget {
@@ -28,52 +31,63 @@ class _SliderViewState extends State<SliderView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.only(top: 30),
+      color: ColorConstants.primaryWhite,
+      padding: context.padding.onlyTopMedium,
       child: ListView(
         children: <Widget>[
-          const SizedBox(
-            height: 30,
-          ),
+          _sizedBox(),
           CircleAvatar(
-            radius: 65,
-            backgroundColor: Colors.grey,
-            child: CircleAvatar(
-              radius: 60,
-              backgroundImage:FileImage(
-                File(widget.profilePhoto),
-              )
+            radius: WidgetSize.avatarRadius.value,
+            backgroundImage: FileImage(
+              File(widget.profilePhoto),
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            widget.userName,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 30,
+          _sizedBox(),
+          Padding(
+            padding: context.padding.onlyLeftMedium,
+            child: GoogleText(
+              text: widget.userName,
+              fontSize: WidgetSize.fontSizeBig.value,
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
-          _SliderMenuItem(
-              title: 'Home', iconData: Icons.abc, onTap: widget.onHomeTap),
-          _SliderMenuItem(
-              title: 'Profile',
-              iconData: Icons.abc,
-              onTap: widget.onProfileTap),
-          _SliderMenuItem(
-              title: 'Settings',
-              iconData: Icons.abc,
-              onTap: widget.onSettingsTap),
-          _SliderMenuItem(
-              title: 'Logout', iconData: Icons.abc, onTap: widget.onLogoutTap),
+          _sizedBox(),
+          _SliderMenuView(widget: widget)
         ],
       ),
+    );
+  }
+
+  SizedBox _sizedBox() {
+    return SizedBox(
+      height: WidgetSize.sizedBoxNormal.value,
+    );
+  }
+}
+
+class _SliderMenuView extends StatelessWidget {
+  const _SliderMenuView({
+    required this.widget,
+  });
+
+  final SliderView widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _SliderMenuItem(
+            title: StringConstants.iconProfile,
+            iconData: Icons.person,
+            onTap: widget.onProfileTap),
+        _SliderMenuItem(
+            title: StringConstants.iconSetting,
+            iconData: Icons.settings,
+            onTap: widget.onSettingsTap),
+        _SliderMenuItem(
+            title: StringConstants.iconLogout,
+            iconData: Icons.logout,
+            onTap: widget.onLogoutTap),
+      ],
     );
   }
 }
@@ -95,16 +109,10 @@ class _SliderMenuItem extends StatelessWidget {
     return ListTile(
       title: GoogleText(
         text: title,
+        fontSize: 16,
       ),
       leading: Icon(iconData, color: Colors.black),
       onTap: onTap,
     );
   }
-}
-
-class Menu {
-  final IconData iconData;
-  final String title;
-
-  Menu(this.iconData, this.title);
 }

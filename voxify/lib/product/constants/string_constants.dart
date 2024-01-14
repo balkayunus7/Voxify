@@ -27,9 +27,10 @@ class StringConstants {
   static const String textfieldSearch = 'Search';
 
   // Navigation Menu
-  static const String navigationMenuHome = 'Home';
-  static const String navigationMenuSaved = 'Saved';
-  static const String navigationMenuProfile = 'Profile';
+  static const String iconHome = 'Home';
+  static const String iconSetting = 'Settings';
+  static const String iconLogout = 'Logout';
+  static const String iconProfile = 'Profile';
 
   // Selected Item
   static const String tagHandshake = 'Contact Dealer';

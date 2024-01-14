@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
@@ -6,6 +8,7 @@ import 'package:voxify/feature/chat/chat_view.dart';
 import 'package:voxify/feature/home/providers/home_notifier.dart';
 import 'package:voxify/product/constants/color_constants.dart';
 import 'package:voxify/product/constants/string_constants.dart';
+import 'package:voxify/product/enums/widget_sizes.dart';
 import 'package:voxify/product/widgets/texts/title_text.dart';
 import '../../product/models/users.dart';
 import '../../product/widgets/texts/google_fonts.dart';
@@ -47,7 +50,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       title: StringConstants.appName,
                       color: ColorConstants.primaryDark)),
               key: _sliderDrawerKey,
-              sliderOpenSize: 179,
+              sliderOpenSize: WidgetSize.sliderOpenSize.value,
               slider: SliderView(
                 profilePhoto: currentUser.profilePhoto.toString(),
                 userName: currentUser.name.toString(),
@@ -86,17 +89,21 @@ class _UserListView extends ConsumerWidget {
               receiverId: user.id.toString(),
             )),
             child: ListTile(
-                title: GoogleText(
-                  text: user.email.toString(),
+              title: GoogleText(
+                text: user.email.toString(),
+                fontSize: WidgetSize.fontSizeNormal.value,
+              ),
+              subtitle: GoogleText(
+                text: user.name.toString(),
+                fontSize: WidgetSize.fontSizeNormal.value,
+              ),
+              leading: CircleAvatar(
+                radius: WidgetSize.avatarRadius.value,
+                backgroundImage: FileImage(
+                  File(user.profilePhoto ?? ''),
                 ),
-                subtitle: GoogleText(
-                  text: user.name.toString(),
-                ),
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    user.profilePhoto.toString(),
-                  ),
-                )),
+              ),
+            ),
           );
         });
   }

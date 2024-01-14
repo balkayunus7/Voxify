@@ -21,7 +21,7 @@ class AuthButton extends StatelessWidget {
           ),
           shape: MaterialStateProperty.all(
             RoundedRectangleBorder(
-              borderRadius: context.border.normalBorderRadius,
+              borderRadius: WidgetSizeConstants.borderRadiusNormal,
             ),
           ),
         ),
