@@ -13,6 +13,34 @@ class ChatNotifier extends StateNotifier<ChatState> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String get currentUserId => _auth.currentUser!.uid;
 
+  Future<void> deleteMessageFromFirestore(
+      Messages message, String receiverId) async {
+    List<String> userIds = [currentUserId, receiverId];
+    userIds.sort();
+    String chatRoomId = userIds.join('_');
+
+    // Reference to the message in Firestore
+    final messageReference = _firestore
+        .collection(FirebaseCollections.chat_rooms.name)
+        .doc(chatRoomId)
+        .collection(FirebaseCollections.messages.name)
+        .where('messageId', isEqualTo: message.messageId);
+
+    // Get the document reference
+    final documentSnapshot = await messageReference.get();
+
+    // Check if the document exists
+    if (documentSnapshot.docs.isNotEmpty) {
+      // Delete the message
+      await _firestore
+          .collection(FirebaseCollections.chat_rooms.name)
+          .doc(chatRoomId)
+          .collection(FirebaseCollections.messages.name)
+          .doc(documentSnapshot.docs.first.id)
+          .delete();
+    }
+  }
+
   Future<void> sendMessage(String receiverId, String message) async {
     final String currentUserId = _auth.currentUser!.uid;
     final String currentUserEmail = _auth.currentUser!.email!;
@@ -66,18 +94,21 @@ class ChatNotifier extends StateNotifier<ChatState> {
 }
 
 class ChatState extends Equatable {
-  const ChatState({this.message});
+  const ChatState({this.message, this.selectedMessage});
 
   final List<Messages>? message;
+  final Messages? selectedMessage;
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, selectedMessage];
 
   ChatState copyWith({
     List<Messages>? message,
+    Messages? selectedMessage,
   }) {
     return ChatState(
       message: message ?? this.message,
+      selectedMessage: selectedMessage ?? this.selectedMessage,
     );
   }
 }

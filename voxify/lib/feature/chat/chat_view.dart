@@ -66,7 +66,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
       }),
       body: Column(
         children: [
-          const _MessageUserList(),
+          _MessageUserList(getMessages),
           Padding(
             padding: context.padding.onlyBottomNormal.copyWith(left: 15),
             child: Column(
@@ -101,8 +101,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     );
   }
 }
-
-
 
 // ignore: must_be_immutable
 class _MessageTextform extends StatefulWidget {
@@ -151,7 +149,8 @@ class _MessageTextformState extends State<_MessageTextform> {
 }
 
 class _MessageUserList extends ConsumerStatefulWidget {
-  const _MessageUserList();
+  final VoidCallback getMessages;
+  const _MessageUserList(this.getMessages);
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -190,7 +189,7 @@ class __MessageUserListState extends ConsumerState<_MessageUserList> {
               previousSenderEmail = state.senderEmail;
             }
             return Padding(
-              padding: context.padding.horizontalNormal.copyWith(bottom: 10),
+              padding: context.padding.horizontalNormal.copyWith(bottom: 3),
               child: Column(
                 crossAxisAlignment: isCurrentUser
                     ? CrossAxisAlignment.end
@@ -212,19 +211,53 @@ class __MessageUserListState extends ConsumerState<_MessageUserList> {
                         : CrossAxisAlignment.start,
                     children: [
                       // Message Text
-                      Container(
-                        decoration: BoxDecoration(
-                          color: isCurrentUser
-                              ? ColorConstants.primaryGreenDark.withOpacity(0.2)
-                              : ColorConstants.primaryGrey.withOpacity(0.2),
-                          borderRadius: WidgetSizeConstants.borderRadiusNormal,
-                        ),
-                        child: Padding(
-                          padding: context.padding.horizontalNormal
-                              .copyWith(top: 7, bottom: 7),
-                          child: SubtitleText(
-                              subtitle: state.message.toString(),
-                              color: ColorConstants.primaryDark),
+                      GestureDetector(
+                        onLongPress: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Delete Message'),
+                                  content: const Text(
+                                      'Are you sure you want to delete this message?'),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          context.route.pop();
+                                        },
+                                        child: const Text('Cancel')),
+                                    TextButton(
+                                        onPressed: () {
+                                          ref
+                                              .watch(chatNotifier.notifier)
+                                              .deleteMessageFromFirestore(
+                                                  state, state.receiverId!)
+                                              .then((value) => context.route
+                                                  .pop()
+                                                  .then((value) =>
+                                                      widget.getMessages()));
+                                        },
+                                        child: const Text('Delete')),
+                                  ],
+                                );
+                              });
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isCurrentUser
+                                ? ColorConstants.primaryGreenDark
+                                    .withOpacity(0.2)
+                                : ColorConstants.primaryGrey.withOpacity(0.2),
+                            borderRadius:
+                                WidgetSizeConstants.borderRadiusNormal,
+                          ),
+                          child: Padding(
+                            padding: context.padding.horizontalNormal
+                                .copyWith(top: 7, bottom: 7),
+                            child: SubtitleText(
+                                subtitle: state.message.toString(),
+                                color: ColorConstants.primaryDark),
+                          ),
                         ),
                       ),
                       // Time Text
