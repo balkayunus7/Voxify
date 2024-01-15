@@ -10,6 +10,8 @@ import 'package:voxify/product/constants/string_constants.dart';
 import 'package:voxify/product/enums/widget_sizes.dart';
 import 'package:voxify/product/widgets/appbar/custom_appbar.dart';
 import 'package:voxify/product/widgets/texts/subtitle_text.dart';
+import '../../product/widgets/appbar/custom_icon.dart';
+import '../../product/widgets/emoji/emoji_widget.dart';
 
 final chatNotifier = StateNotifierProvider<ChatNotifier, ChatState>((ref) {
   return ChatNotifier();
@@ -27,7 +29,7 @@ class ChatPage extends ConsumerStatefulWidget {
 
 class _ChatPageState extends ConsumerState<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
-
+  bool isEmojiVisible = true;
   @override
   void initState() {
     super.initState();
@@ -67,14 +69,30 @@ class _ChatPageState extends ConsumerState<ChatPage> {
           const _MessageUserList(),
           Padding(
             padding: context.padding.onlyBottomNormal.copyWith(left: 15),
-            child: Row(
+            child: Column(
               children: [
-                _MessageTextform(messageController: _messageController),
-                IconButtons(
-                    icon: Icons.send,
-                    onPressed: () {
-                      sendMessage().then((value) => getMessages());
-                    }),
+                Row(
+                  children: [
+                    _MessageTextform(
+                      messageController: _messageController,
+                      isEmojiVisible: isEmojiVisible,
+                      toggleEmojiVisibility: () {
+                        setState(() {
+                          isEmojiVisible = !isEmojiVisible;
+                        });
+                      },
+                    ),
+                    IconButtons(
+                        icon: Icons.send,
+                        onPressed: () {
+                          sendMessage().then((value) => getMessages());
+                        }),
+                  ],
+                ),
+                if (isEmojiVisible)
+                  EmojiWidget(addEmojiController: (emoji) {
+                    _messageController.text += emoji;
+                  }),
               ],
             ),
           )
@@ -84,31 +102,25 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   }
 }
 
-class IconButtons extends StatelessWidget {
-  const IconButtons({
-    Key? key,
-    required this.icon,
-    required this.onPressed,
-  }) : super(key: key);
-  final IconData icon;
-  final VoidCallback onPressed;
 
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-        color: ColorConstants.primaryGreenDark,
-        onPressed: onPressed,
-        icon: Icon(icon));
-  }
-}
 
-class _MessageTextform extends StatelessWidget {
-  const _MessageTextform({
+// ignore: must_be_immutable
+class _MessageTextform extends StatefulWidget {
+  _MessageTextform({
     required TextEditingController messageController,
+    required this.isEmojiVisible,
+    required this.toggleEmojiVisibility,
   }) : _messageController = messageController;
 
+  bool isEmojiVisible;
   final TextEditingController _messageController;
+  final VoidCallback toggleEmojiVisibility;
 
+  @override
+  State<_MessageTextform> createState() => _MessageTextformState();
+}
+
+class _MessageTextformState extends State<_MessageTextform> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -117,13 +129,21 @@ class _MessageTextform extends StatelessWidget {
           color: ColorConstants.primaryGreenDark.withOpacity(0.2),
           borderRadius: WidgetSizeConstants.borderRadiusNormal),
       child: TextFormField(
-        controller: _messageController,
-        autocorrect: true,
-        decoration: const InputDecoration(
+        controller: widget._messageController,
+        autocorrect: false,
+        decoration: InputDecoration(
           hintText: StringConstants.chatMessage,
-          prefixIcon: Icon(Icons.emoji_emotions_outlined),
+          prefixIcon: GestureDetector(
+              onTap: () {
+                setState(() {
+                  widget.toggleEmojiVisibility();
+                });
+              },
+              child: Icon(widget.isEmojiVisible
+                  ? Icons.keyboard
+                  : Icons.emoji_emotions_outlined)),
           border: InputBorder.none,
-          suffixIcon: Icon(Icons.attach_file),
+          suffixIcon: const Icon(Icons.attach_file),
         ),
       ),
     );
@@ -161,8 +181,8 @@ class __MessageUserListState extends ConsumerState<_MessageUserList> {
           itemCount: messageList.length,
           itemBuilder: (context, index) {
             final state = messageList[index];
-            bool isCurrentUser =
-                state.senderId == ref.read(chatNotifier.notifier).currentUserId;
+            bool isCurrentUser = state.senderId ==
+                ref.watch(chatNotifier.notifier).currentUserId;
             String formattedDateTime =
                 formatTimestamp(state.timestamp!.toDate());
             bool showEmail = previousSenderEmail != state.senderEmail;
@@ -177,6 +197,7 @@ class __MessageUserListState extends ConsumerState<_MessageUserList> {
                     : CrossAxisAlignment.start,
                 children: [
                   if (showEmail)
+                    // Email Text
                     Padding(
                       padding: context.padding.onlyBottomLow,
                       child: SubtitleText(
@@ -190,6 +211,7 @@ class __MessageUserListState extends ConsumerState<_MessageUserList> {
                         ? CrossAxisAlignment.end
                         : CrossAxisAlignment.start,
                     children: [
+                      // Message Text
                       Container(
                         decoration: BoxDecoration(
                           color: isCurrentUser
@@ -205,6 +227,7 @@ class __MessageUserListState extends ConsumerState<_MessageUserList> {
                               color: ColorConstants.primaryDark),
                         ),
                       ),
+                      // Time Text
                       Padding(
                         padding: context.padding.onlyLeftHigh,
                         child: Text(
