@@ -10,6 +10,7 @@ enum WidgetSize {
   paddingAuthTop(125),
   fontSizeNormal(16),
   fontSizeBig(35),
+  loadingSize(25),
   sliderOpenSize(180);
 
 

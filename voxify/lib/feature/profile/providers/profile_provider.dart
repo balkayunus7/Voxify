@@ -1,11 +1,9 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../../product/models/users.dart';
 import '../../../product/utilites/firebase/firebase_collections.dart';
 import '../../../product/utilites/firebase/firebase_utility.dart';
@@ -63,15 +61,15 @@ class ProfileNotifier extends StateNotifier<ProfileState> with FirebaseUtility {
   // Method to change password
   Future<void> changePassword(email) async {
     final instance = FirebaseAuth.instance;
-      try {
-        // Updating password in Firebase Auth
-        await instance.sendPasswordResetEmail(email: email);
-        // Updating password in Firestore
-      } on FirebaseAuthException catch (e) {
-        if (kDebugMode) {
-          print(e.message);
-        }
+    try {
+      // Updating password in Firebase Auth
+      await instance.sendPasswordResetEmail(email: email);
+      // Updating password in Firestore
+    } on FirebaseAuthException catch (e) {
+      if (kDebugMode) {
+        print(e.message);
       }
+    }
   }
 
   // Method to change username
@@ -82,8 +80,9 @@ class ProfileNotifier extends StateNotifier<ProfileState> with FirebaseUtility {
       try {
         final userUid = user.uid;
         // Updating username and bio in Firestore
-        fstore.updateDataToFirestore({'name': name,},
-            FirebaseCollections.users.name, userUid);
+        fstore.updateDataToFirestore({
+          'name': name,
+        }, FirebaseCollections.users.name, userUid);
       } catch (e) {
         if (kDebugMode) {
           print(e);

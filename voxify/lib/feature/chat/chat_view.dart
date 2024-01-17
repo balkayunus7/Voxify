@@ -8,10 +8,12 @@ import 'package:voxify/feature/chat/providers/chat_notifier.dart';
 import 'package:voxify/product/constants/color_constants.dart';
 import 'package:voxify/product/constants/string_constants.dart';
 import 'package:voxify/product/enums/widget_sizes.dart';
+import 'package:voxify/product/models/messages.dart';
 import 'package:voxify/product/widgets/appbar/custom_appbar.dart';
+import 'package:voxify/product/widgets/appbar/custom_sizedbox_shrink.dart';
 import 'package:voxify/product/widgets/texts/subtitle_text.dart';
 import '../../product/widgets/appbar/custom_icon.dart';
-import '../../product/widgets/emoji/emoji_widget.dart';
+import 'mixin/chat_view_mixin.dart';
 
 final chatNotifier = StateNotifierProvider<ChatNotifier, ChatState>((ref) {
   return ChatNotifier();
@@ -27,41 +29,14 @@ class ChatPage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends ConsumerState<ChatPage> {
-  final TextEditingController _messageController = TextEditingController();
-  bool isEmojiVisible = true;
-  @override
-  void initState() {
-    super.initState();
-    getMessages();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  Future<void> sendMessage() async {
-    if (_messageController.text.isNotEmpty) {
-      ref
-          .read(chatNotifier.notifier)
-          .sendMessage(widget.receiverId, _messageController.text);
-      _messageController.clear();
-    }
-  }
-
-  Future<void> getMessages() async {
-    ref.read(chatNotifier.notifier).getMessages(
-        ref.read(chatNotifier.notifier).currentUserId, widget.receiverId);
-  }
-
+class _ChatPageState extends ConsumerState<ChatPage> with ChatViewMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(widget.receiverEmail,
           icon: Icons.arrow_back_ios,
           preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: const SizedBox.shrink(), onPressed: () {
+          child: const SizedBoxShrink(), onPressed: () {
         context.route.pop();
       }),
       body: Column(
@@ -74,25 +49,14 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                 Row(
                   children: [
                     _MessageTextform(
-                      messageController: _messageController,
-                      isEmojiVisible: isEmojiVisible,
-                      toggleEmojiVisibility: () {
-                        setState(() {
-                          isEmojiVisible = !isEmojiVisible;
-                        });
-                      },
+                      messageController: messageController,
                     ),
                     IconButtons(
-                        icon: Icons.send,
-                        onPressed: () {
-                          sendMessage().then((value) => getMessages());
-                        }),
+                      icon: Icons.send,
+                      onPressed: sendAndThenGetMessages,
+                    ),
                   ],
                 ),
-                if (isEmojiVisible)
-                  EmojiWidget(addEmojiController: (emoji) {
-                    _messageController.text += emoji;
-                  }),
               ],
             ),
           )
@@ -104,15 +68,11 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 
 // ignore: must_be_immutable
 class _MessageTextform extends StatefulWidget {
-  _MessageTextform({
+  const _MessageTextform({
     required TextEditingController messageController,
-    required this.isEmojiVisible,
-    required this.toggleEmojiVisibility,
   }) : _messageController = messageController;
 
-  bool isEmojiVisible;
   final TextEditingController _messageController;
-  final VoidCallback toggleEmojiVisibility;
 
   @override
   State<_MessageTextform> createState() => _MessageTextformState();
@@ -129,19 +89,10 @@ class _MessageTextformState extends State<_MessageTextform> {
       child: TextFormField(
         controller: widget._messageController,
         autocorrect: false,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           hintText: StringConstants.chatMessage,
-          prefixIcon: GestureDetector(
-              onTap: () {
-                setState(() {
-                  widget.toggleEmojiVisibility();
-                });
-              },
-              child: Icon(widget.isEmojiVisible
-                  ? Icons.keyboard
-                  : Icons.emoji_emotions_outlined)),
           border: InputBorder.none,
-          suffixIcon: const Icon(Icons.attach_file),
+          suffixIcon: Icon(Icons.attach_file),
         ),
       ),
     );
@@ -176,6 +127,7 @@ class __MessageUserListState extends ConsumerState<_MessageUserList> {
     }
     return Expanded(
       child: ScrollablePositionedList.builder(
+          shrinkWrap: true,
           itemScrollController: scrollController,
           itemCount: messageList.length,
           itemBuilder: (context, index) {
@@ -213,52 +165,9 @@ class __MessageUserListState extends ConsumerState<_MessageUserList> {
                       // Message Text
                       GestureDetector(
                         onLongPress: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Delete Message'),
-                                  content: const Text(
-                                      'Are you sure you want to delete this message?'),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          context.route.pop();
-                                        },
-                                        child: const Text('Cancel')),
-                                    TextButton(
-                                        onPressed: () {
-                                          ref
-                                              .watch(chatNotifier.notifier)
-                                              .deleteMessageFromFirestore(
-                                                  state, state.receiverId!)
-                                              .then((value) => context.route
-                                                  .pop()
-                                                  .then((value) =>
-                                                      widget.getMessages()));
-                                        },
-                                        child: const Text('Delete')),
-                                  ],
-                                );
-                              });
+                          showDialogDelete(context, state);
                         },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: isCurrentUser
-                                ? ColorConstants.primaryGreenDark
-                                    .withOpacity(0.2)
-                                : ColorConstants.primaryGrey.withOpacity(0.2),
-                            borderRadius:
-                                WidgetSizeConstants.borderRadiusNormal,
-                          ),
-                          child: Padding(
-                            padding: context.padding.horizontalNormal
-                                .copyWith(top: 7, bottom: 7),
-                            child: SubtitleText(
-                                subtitle: state.message.toString(),
-                                color: ColorConstants.primaryDark),
-                          ),
-                        ),
+                        child: messageContainer(isCurrentUser, context, state),
                       ),
                       // Time Text
                       Padding(
@@ -276,5 +185,52 @@ class __MessageUserListState extends ConsumerState<_MessageUserList> {
             );
           }),
     );
+  }
+
+  Container messageContainer(
+      bool isCurrentUser, BuildContext context, Messages state) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isCurrentUser
+            ? ColorConstants.primaryGreenDark.withOpacity(0.2)
+            : ColorConstants.primaryGrey.withOpacity(0.2),
+        borderRadius: WidgetSizeConstants.borderRadiusNormal,
+      ),
+      child: Padding(
+        padding: context.padding.horizontalNormal.copyWith(top: 7, bottom: 7),
+        child: SubtitleText(
+            subtitle: state.message.toString(),
+            color: ColorConstants.primaryDark),
+      ),
+    );
+  }
+
+  Future<dynamic> showDialogDelete(BuildContext context, Messages state) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Delete Message'),
+            content:
+                const Text('Are you sure you want to delete this message?'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    context.route.pop();
+                  },
+                  child: const Text('Cancel')),
+              TextButton(
+                  onPressed: () {
+                    ref
+                        .watch(chatNotifier.notifier)
+                        .deleteMessageFromFirestore(state, state.receiverId!)
+                        .then((value) => context.route
+                            .pop()
+                            .then((value) => widget.getMessages()));
+                  },
+                  child: const Text('Delete')),
+            ],
+          );
+        });
   }
 }

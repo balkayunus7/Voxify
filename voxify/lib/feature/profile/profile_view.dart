@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kartal/kartal.dart';
 import 'package:voxify/feature/home/home_view.dart';
 import 'package:voxify/product/enums/widget_sizes.dart';
-
 import '../../product/constants/color_constants.dart';
 import '../../product/constants/string_constants.dart';
 import '../../product/widgets/appbar/custom_appbar.dart';
